@@ -2,6 +2,8 @@ import com.github.javafaker.Faker;
 import entities.User;
 import functional_interfaces.StringModifier;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -142,5 +144,29 @@ public class Main {
 
 		// List<User> minorenni2 = users.stream().filter(user -> user.getAge() < 18).collect(Collectors.toList());
 		// Alternativa a sopra meno compatta e leggibile, però tramite il collect avremo per le mani un metodo versatile che fa molte cose in più (vedremo domani)
+
+		// **************************************** DATE *********************
+		// Per semplicità per gestire le date in Java meglio usare LocalDate piuttosto che Date
+		LocalDate today = LocalDate.now();
+		System.out.println(today);
+
+		LocalDate yesterday = today.minusDays(1);
+		System.out.println(yesterday);
+
+		LocalDate tomorrow = today.plusDays(1);
+		System.out.println(tomorrow);
+
+		LocalDate todayNextYear = today.plusYears(1);
+		System.out.println(todayNextYear);
+
+		LocalDateTime currentDateAndTime = LocalDateTime.now();
+		System.out.println(currentDateAndTime);
+
+		System.out.println(todayNextYear.isBefore(today));
+		System.out.println(todayNextYear.isAfter(today));
+		System.out.println(todayNextYear.getMonth());
+
+		LocalDate date = LocalDate.of(1990, 3, 5);
+		System.out.println(date);
 	}
 }
