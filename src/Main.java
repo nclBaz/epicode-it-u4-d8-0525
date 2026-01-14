@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class Main {
 	public static void main(String[] args) {
@@ -85,10 +86,61 @@ public class Main {
 
 		Predicate<User> isAdult = user -> user.getAge() >= 18;
 
-		users.forEach(user -> {
-			if (isAdult.test(user)) System.out.println("L'utente " + user + " è maggiorenne");
-			else System.out.println("L'utente " + user + " è minorenne");
-		});
+//		users.forEach(user -> {
+//			if (isAdult.test(user)) System.out.println("L'utente " + user + " è maggiorenne");
+//			else System.out.println("L'utente " + user + " è minorenne");
+//		});
 
+		// ****************************************** REMOVE IF **************************************
+		//users.removeIf(user -> user.getAge() >= 18);
+		// users.removeIf(isAdult); come sopra ma riutilizzando una lambda Predicate già definito in precedenza
+
+		users.forEach(user -> System.out.println(user));
+
+
+		// ******************************************* STREAM - OPERAZIONI INTERMEDIE ***************************************
+
+		System.out.println("------------------------------------ FILTER --------------------------------------");
+		Stream<User> stream = users.stream().filter(user -> user.getAge() < 18);
+		stream.forEach(user -> System.out.println(user));
+
+		System.out.println("------------------------------------ MAP --------------------------------------");
+		Stream<String> nomiConcatenati = users.stream().map(user -> user.getName() + " --- " + user.getSurname());
+		nomiConcatenati.forEach(fullName -> System.out.println(fullName));
+		Stream<Integer> streamAges = users.stream().map(user -> user.getAge());
+		streamAges.forEach(age -> System.out.println(age));
+
+		System.out.println("------------------------------------ FILTER & MAP --------------------------------------");
+		users.stream()
+				.filter(user -> user.getAge() >= 18)
+				.map(user -> user.getSurname())
+				.forEach(surname -> System.out.println(surname));
+
+		// ******************************************* STREAM - OPERAZIONI TERMINALI ***************************************
+		System.out.println("------------------------------------ ANYMATCH & ALLMATCH --------------------------------------");
+		// Sono i corrispettivi di .some() e .every() del mondo JS
+		// AnyMatch: controlla se ALMENO UN elemento della lista/stream soddisfa una certa condizione (Predicate)
+		// AllMatch: controlla se TUTTI gli elementi della lista/stream soddsifano una certa condizione (Predicate)
+		// Entrambi quindi tornano un BOOLEANO
+
+		if (users.stream().anyMatch(user -> user.getAge() >= 18)) System.out.println("Almeno uno è maggiorenne");
+		else System.out.println("Sono tutti minorenni");
+
+		if (users.stream().allMatch(user -> user.getAge() >= 18)) System.out.println("Sono tutti maggiorenni");
+		else System.out.println("C'è almeno un minorenne");
+
+		System.out.println("------------------------------------ REDUCE --------------------------------------");
+		int total = users.stream()
+				.filter(user -> user.getAge() < 18)
+				.map(user -> user.getAge())
+				.reduce(0, (partialSum, currElem) -> partialSum + currElem);
+		System.out.println("Totale delle età dei minorenni: " + total);
+
+		System.out.println("------------------------------------ TO LIST --------------------------------------");
+		List<User> minorenni = users.stream().filter(user -> user.getAge() < 18).toList(); // Crea una NUOVA lista
+		System.out.println(minorenni);
+
+		// List<User> minorenni2 = users.stream().filter(user -> user.getAge() < 18).collect(Collectors.toList());
+		// Alternativa a sopra meno compatta e leggibile, però tramite il collect avremo per le mani un metodo versatile che fa molte cose in più (vedremo domani)
 	}
 }
